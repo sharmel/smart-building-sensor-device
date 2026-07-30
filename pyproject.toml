@@ -1,0 +1,20 @@
+[project]
+name = "smart-building-sensor-service"
+version = "0.1.0"
+description = "Practice FastAPI IoT backend"
+requires-python = ">=3.12"
+
+dependencies = [
+    "fastapi>=0.116",
+    "uvicorn[standard]>=0.35",
+    "pydantic>=2.11",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+    "ruff",
+    "mypy"
+]
