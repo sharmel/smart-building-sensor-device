@@ -96,10 +96,30 @@ class SensorService:
 
         if sensor_type == SensorType.MOTION:
             return AlarmState.NORMAL
-
         limit = thresholds[sensor_type]
-
         if value > limit:
             return AlarmState.ALARM
-
         return AlarmState.NORMAL
+
+
+async def get_sensor(self, sensor_id: str):
+    return await self.repository.get(sensor_id)
+
+
+async def list_sensors(
+    self,
+    sensor_type=None,
+    building_id=None,
+    alarm=None,
+):
+    sensors = await self.repository.list()
+    if sensor_type:
+        sensors = [s for s in sensors if s.sensor_type.value == sensor_type]
+
+    if building_id:
+        sensors = [s for s in sensors if s.building_id == building_id]
+
+    if alarm is not None:
+        sensors = [s for s in sensors if (s.alarm_state.name == "ALARM") == alarm]
+
+    return sensors
