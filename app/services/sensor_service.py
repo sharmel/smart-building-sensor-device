@@ -1,6 +1,6 @@
 from datetime import datetime
 from app.core.config import Settings
-from app.core.exceptions import OutOfOrderReadingError
+from app.core.exceptions import *
 from app.models.event import SensorAlarmEvent
 from app.models.sensor import (
     AlarmState,
@@ -30,6 +30,11 @@ class SensorService:
         """
         Process an incoming sensor reading.
         """
+
+        self._validate_sensor_value(
+            request.sensor_type,
+            request.value,
+        )
 
         await self._validate_timestamp(
             request.sensor_id,
@@ -68,18 +73,23 @@ class SensorService:
 
         return sensor
 
-    async def _validate_timestamp(
-        self,
-        sensor_id: str,
-        timestamp: datetime,
-    ) -> None:
-        if not await self.repository.is_newer(
-            sensor_id,
-            timestamp,
-        ):
-            raise OutOfOrderReadingError(
-                "Reading timestamp is older than latest reading."
-            )
+
+async def _validate_timestamp(
+    self,
+    sensor_id: str,
+    timestamp: datetime,
+) -> None:
+
+    existing = await self.repository.get(sensor_id)
+
+    if existing is None:
+        return
+
+    if timestamp == existing.timestamp:
+        raise DuplicateReadingError("Duplicate timestamp.")
+
+    if timestamp < existing.timestamp:
+        raise OutOfOrderReadingError("Out-of-order reading.")
 
     def _calculate_alarm_state(
         self,
@@ -103,7 +113,11 @@ class SensorService:
 
 
 async def get_sensor(self, sensor_id: str):
-    return await self.repository.get(sensor_id)
+    sensor = await self.repository.get(sensor_id)
+
+    if sensor is None:
+        raise SensorNotFoundError(f"Sensor '{sensor_id}' not found.")
+    return sensor
 
 
 async def list_sensors(
@@ -123,3 +137,29 @@ async def list_sensors(
         sensors = [s for s in sensors if (s.alarm_state.name == "ALARM") == alarm]
 
     return sensors
+
+
+def _validate_sensor_value(
+    self,
+    sensor_type: SensorType,
+    value: float,
+) -> None:
+    """
+    Validate business rules for sensor values.
+    """
+
+    if sensor_type == SensorType.TEMPERATURE:
+        if value < -50 or value > 100:
+            raise InvalidSensorValueError("Temperature must be between -50 and 100°C.")
+
+    elif sensor_type == SensorType.HUMIDITY:
+        if value < 0 or value > 100:
+            raise InvalidSensorValueError("Humidity must be between 0 and 100%.")
+
+    elif sensor_type == SensorType.CO2:
+        if value < 0:
+            raise InvalidSensorValueError("CO₂ cannot be negative.")
+
+    elif sensor_type == SensorType.SMOKE:
+        if value < 0:
+            raise InvalidSensorValueError("Smoke level cannot be negative.")

@@ -25,16 +25,8 @@ async def ingest_reading(
     request: SensorReadingRequest,
     service: SensorService = Depends(get_sensor_service),
 ):
-    try:
-        await service.ingest(request)
-
-        return AcceptedResponse()
-
-    except OutOfOrderReadingError as ex:
-        raise HTTPException(
-            status_code=409,
-            detail=str(ex),
-        )
+    await service.ingest(request)
+    return AcceptedResponse()
 
 
 @router.get(

@@ -5,6 +5,9 @@ from app.core.logging import configure_logging
 from app.api.debug import router as debug_router
 from app.api.events import router as event_router
 from app.api.sensors import router as sensor_router
+from app.api.exception_handlers import (
+    register_exception_handlers,
+)
 
 settings = get_settings()
 
@@ -19,6 +22,7 @@ app.include_router(health_router)
 app.include_router(debug_router)
 app.include_router(event_router)
 app.include_router(sensor_router)
+register_exception_handlers(app)
 
 
 @app.get("/")
