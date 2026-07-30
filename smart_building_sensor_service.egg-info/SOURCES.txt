@@ -4,6 +4,11 @@ app/__init__.py
 app/main.py
 app/api/__init__.py
 app/api/health.py
+app/core/__init__.py
+app/core/config.py
+app/core/logging.py
+app/models/events.py
+app/models/sensor.py
 smart_building_sensor_service.egg-info/PKG-INFO
 smart_building_sensor_service.egg-info/SOURCES.txt
 smart_building_sensor_service.egg-info/dependency_links.txt
