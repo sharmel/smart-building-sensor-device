@@ -18,3 +18,13 @@ uvicorn app.main:app --reload
 Open
 
 http://localhost:8000/docs
+
+
+FastAPI
+                   │
+              API Routers
+                   │
+            SensorService
+             │         │
+             │         │
+      Repository    Publisher
