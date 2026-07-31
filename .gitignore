@@ -11,3 +11,4 @@ env/
 ENV/
 eggs/ 
 .eggs/
+*.egg-info/
