@@ -1,5 +1,8 @@
 # Smart Building Sensor Service
 
+ Management of  thousands of smart buildings. The building contains sensors (temperature, humidity, CO₂, occupancy, etc.) that occassionally report measurements.
+
+
 - FastAPI
 - Clean Architecture
 - Repository Pattern
