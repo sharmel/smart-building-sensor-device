@@ -7,3 +7,7 @@ __pycache__/
 .idea/
 .vscode/
 .env
+env/ 
+ENV/
+eggs/ 
+.eggs/
