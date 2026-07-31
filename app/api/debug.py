@@ -10,5 +10,4 @@ async def count(
     repository: SensorRepository = Depends(get_repository),
 ):
     sensors = await repository.list()
-
     return {"count": len(sensors)}

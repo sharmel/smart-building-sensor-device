@@ -2,14 +2,14 @@ from datetime import datetime
 from app.core.config import Settings
 from app.core.exceptions import *
 from app.models.event import SensorAlarmEvent
+from app.publishers.base import EventPublisher
+from app.repositories.base import SensorRepository
+from app.schemas.requests import SensorReadingRequest
 from app.models.sensor import (
     AlarmState,
     Sensor,
     SensorType,
 )
-from app.publishers.base import EventPublisher
-from app.repositories.base import SensorRepository
-from app.schemas.requests import SensorReadingRequest
 
 
 class SensorService:
@@ -30,12 +30,10 @@ class SensorService:
         """
         Process an incoming sensor reading.
         """
-
         self._validate_sensor_value(
             request.sensor_type,
             request.value,
         )
-
         await self._validate_timestamp(
             request.sensor_id,
             request.timestamp,
@@ -45,9 +43,7 @@ class SensorService:
             request.sensor_type,
             request.value,
         )
-
         previous = await self.repository.get(request.sensor_id)
-
         sensor = Sensor(
             sensor_id=request.sensor_id,
             building_id=request.building_id,
@@ -58,7 +54,6 @@ class SensorService:
         )
 
         await self.repository.save(sensor)
-
         if previous is not None and previous.alarm_state != sensor.alarm_state:
             await self.publisher.publish(
                 SensorAlarmEvent(
@@ -70,7 +65,6 @@ class SensorService:
                     timestamp=datetime.utcnow(),
                 )
             )
-
         return sensor
 
 
@@ -81,13 +75,10 @@ async def _validate_timestamp(
 ) -> None:
 
     existing = await self.repository.get(sensor_id)
-
     if existing is None:
         return
-
     if timestamp == existing.timestamp:
         raise DuplicateReadingError("Duplicate timestamp.")
-
     if timestamp < existing.timestamp:
         raise OutOfOrderReadingError("Out-of-order reading.")
 
@@ -96,7 +87,6 @@ async def _validate_timestamp(
         sensor_type: SensorType,
         value: float,
     ) -> AlarmState:
-
         thresholds = {
             SensorType.TEMPERATURE: self.settings.temperature_threshold,
             SensorType.HUMIDITY: self.settings.humidity_threshold,
@@ -114,7 +104,6 @@ async def _validate_timestamp(
 
 async def get_sensor(self, sensor_id: str):
     sensor = await self.repository.get(sensor_id)
-
     if sensor is None:
         raise SensorNotFoundError(f"Sensor '{sensor_id}' not found.")
     return sensor
@@ -129,13 +118,10 @@ async def list_sensors(
     sensors = await self.repository.list()
     if sensor_type:
         sensors = [s for s in sensors if s.sensor_type.value == sensor_type]
-
     if building_id:
         sensors = [s for s in sensors if s.building_id == building_id]
-
     if alarm is not None:
         sensors = [s for s in sensors if (s.alarm_state.name == "ALARM") == alarm]
-
     return sensors
 
 
@@ -147,7 +133,6 @@ def _validate_sensor_value(
     """
     Validate business rules for sensor values.
     """
-
     if sensor_type == SensorType.TEMPERATURE:
         if value < -50 or value > 100:
             raise InvalidSensorValueError("Temperature must be between -50 and 100°C.")
@@ -155,11 +140,9 @@ def _validate_sensor_value(
     elif sensor_type == SensorType.HUMIDITY:
         if value < 0 or value > 100:
             raise InvalidSensorValueError("Humidity must be between 0 and 100%.")
-
     elif sensor_type == SensorType.CO2:
         if value < 0:
             raise InvalidSensorValueError("CO₂ cannot be negative.")
-
     elif sensor_type == SensorType.SMOKE:
         if value < 0:
             raise InvalidSensorValueError("Smoke level cannot be negative.")

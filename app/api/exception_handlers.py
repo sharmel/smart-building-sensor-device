@@ -32,7 +32,6 @@ def register_exception_handlers(app: FastAPI):
 
     @app.exception_handler(OutOfOrderReadingError)
     async def out_of_order(
-        request: Request,
         exc: OutOfOrderReadingError,
     ):
         return JSONResponse(
@@ -42,7 +41,6 @@ def register_exception_handlers(app: FastAPI):
 
     @app.exception_handler(InvalidSensorValueError)
     async def invalid_value(
-        request: Request,
         exc: InvalidSensorValueError,
     ):
         return JSONResponse(

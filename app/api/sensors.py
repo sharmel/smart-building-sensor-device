@@ -1,19 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-
-from app.core.exceptions import OutOfOrderReadingError
+from app.core.exceptions import *
 from app.schemas.requests import SensorReadingRequest
+from app.services.sensor_service import SensorService
+from .dependencies import get_sensor_service
 from app.schemas.responses import (
     AcceptedResponse,
     SensorResponse,
 )
-from app.services.sensor_service import SensorService
 
-from .dependencies import get_sensor_service
-
-router = APIRouter(
-    prefix="/sensors",
-    tags=["Sensors"],
-)
+router = APIRouter(prefix="/sensors", tags=["Sensors"])
 
 
 @router.post(

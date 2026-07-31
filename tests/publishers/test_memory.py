@@ -17,11 +17,8 @@ async def test_publish_event():
         value=38.5,
         timestamp=datetime.now(UTC),
     )
-
     await publisher.publish(event)
-
     events = await publisher.history()
-
     assert len(events) == 1
     assert events[0].sensor_id == "temp-001"
 
@@ -29,7 +26,6 @@ async def test_publish_event():
 @pytest.mark.asyncio
 async def test_publish_multiple_events():
     publisher = InMemoryEventPublisher()
-
     for index in range(5):
         event = SensorAlarmEvent(
             sensor_id=f"sensor-{index}",
@@ -39,9 +35,6 @@ async def test_publish_multiple_events():
             value=50,
             timestamp=datetime.now(UTC),
         )
-
         await publisher.publish(event)
-
     events = await publisher.history()
-
     assert len(events) == 5

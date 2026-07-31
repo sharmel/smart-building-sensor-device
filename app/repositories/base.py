@@ -4,8 +4,6 @@ from app.models.sensor import Sensor
 
 
 class SensorRepository(ABC):
-    """Abstract repository for sensor state."""
-
     @abstractmethod
     async def save(self, sensor: Sensor) -> None:
         """Save or update the latest sensor state."""

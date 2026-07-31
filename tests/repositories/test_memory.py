@@ -7,7 +7,6 @@ from app.repositories.memory import InMemorySensorRepository
 @pytest.mark.asyncio
 async def test_save_and_get_sensor():
     repository = InMemorySensorRepository()
-
     sensor = Sensor(
         sensor_id="temp-001",
         building_id="HQ",
@@ -19,7 +18,6 @@ async def test_save_and_get_sensor():
 
     await repository.save(sensor)
     stored = await repository.get("temp-001")
-
     assert stored is not None
     assert stored.sensor_id == "temp-001"
     assert stored.value == 22.5
@@ -28,7 +26,6 @@ async def test_save_and_get_sensor():
 @pytest.mark.asyncio
 async def test_list_returns_all_sensors():
     repository = InMemorySensorRepository()
-
     for index in range(3):
         await repository.save(
             Sensor(
@@ -40,16 +37,13 @@ async def test_list_returns_all_sensors():
                 alarm_state=AlarmState.NORMAL,
             )
         )
-
     sensors = await repository.list()
-
     assert len(sensors) == 3
 
 
 @pytest.mark.asyncio
 async def test_is_newer():
     repository = InMemorySensorRepository()
-
     first = datetime(2026, 1, 1, tzinfo=UTC)
     second = datetime(2026, 1, 2, tzinfo=UTC)
 

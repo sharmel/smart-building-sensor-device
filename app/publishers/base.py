@@ -4,8 +4,6 @@ from app.models.event import SensorAlarmEvent
 
 
 class EventPublisher(ABC):
-    """Abstract event publisher."""
-
     @abstractmethod
     async def publish(
         self,

@@ -1,13 +1,10 @@
 # Smart Building Sensor Service
 
-Practice project demonstrating
-
 - FastAPI
 - Clean Architecture
 - Repository Pattern
 - Event Driven Design
 - Unit Testing
-- Docker
 
 ## Run
 
@@ -15,16 +12,4 @@ Practice project demonstrating
 uvicorn app.main:app --reload
 ```
 
-Open
-
-http://localhost:8000/docs
-
-
-FastAPI
-                   │
-              API Routers
-                   │
-            SensorService
-             │         │
-             │         │
-      Repository    Publisher
+Visit: http://localhost:8000/docs

@@ -15,5 +15,4 @@ class SensorReadingRequest(BaseModel):
     def validate_value(cls, value: float) -> float:
         if value < 0:
             raise ValueError("Sensor value cannot be negative")
-
         return value
